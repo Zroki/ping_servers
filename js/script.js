@@ -1,7 +1,7 @@
 const ping = require('ping');
-// const { store } = require('../js/helpers');
 
 let interval;
+let timer = 1;
 
 async function testHosts(host) {
 	const test = await new Promise((res) => {
@@ -15,8 +15,12 @@ async function testHosts(host) {
 	return test;
 }
 
+document.querySelector('#time').addEventListener('change', (e) => {
+	document.querySelector('#time_value').innerText = e.target.value;
+	timer = Number(e.target.value);
+});
+
 document.addEventListener('click', ({target}) => {
-	console.log(store.get('test'));
 	if (target.closest('.start')) {
 		const button = target.closest('.start');
 		const hostValue = document.querySelector('#host');
@@ -29,13 +33,18 @@ document.addEventListener('click', ({target}) => {
 			interval = setInterval(async () => {
 				const test = await testHosts(hostValue.value);
 				toggleIndicator(test);
-			}, 2000);
+			}, timer);
 		} else {
 			button.dataset.on = 'false';
 			button.innerText = 'Включить';
 			hostValue.disabled = false;
 
 			clearInterval(interval);
+
+			setTimeout(() => {
+				console.log(0);
+				toggleIndicator('off');
+			}, 1000)
 		}
 	}
 

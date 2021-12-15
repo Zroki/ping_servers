@@ -1,15 +1,24 @@
 const Store = require('electron-store');
+const { ipcRenderer } = require('electron');
 
 const store = new Store();
 
-const imagePath = `${__dirname}/img`;
-
 function toggleIndicator(flag) {
-
     if (flag) {
-        store.get('test').setImage(`${imagePath}/active.png`);
-    } else {
-        store.get('test').setImage(`${imagePath}/disabled.png`);
+        ipcRenderer.send('message', {
+            image: `active.png`,
+        });
+    }
+    if (flag === false) {
+        ipcRenderer.send('message', {
+            image: `disabled.png`,
+        });
+    }
+    if (flag === 'off') {
+        console.log(1);
+        ipcRenderer.send('message', {
+            image: `off.png`,
+        });
     }
 }
 

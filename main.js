@@ -1,6 +1,6 @@
 const path = require('path');
 const url = require('url');
-const { app, BrowserWindow, Tray } = require('electron');
+const { app, BrowserWindow, Tray, ipcMain } = require('electron');
 // const { test } = require('./js/script');
 let { store } = require('./js/helpers');
 // const store = require('store');
@@ -9,12 +9,13 @@ let win;
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 800,
-    height: 500,
+    width: 300,
+    height: 150,
     resizable: false,
     icon: __dirname + '/img/icon.jpg',
     webPreferences: {
       nodeIntegration: true,
+      contextIsolation: false,
     }
   });
 
@@ -30,16 +31,16 @@ function createWindow() {
 
   win.setMenuBarVisibility(false);
 
-  // const tray = new Tray(__dirname + '/img/active.png');
-  const qqq = new Tray(`${__dirname}/img/disabled.png`);
-  // console.log(imagePath);
-  console.log(qqq);
+  let tray = new Tray(`${ __dirname }/img/off.png`);
 
-  // setTimeout(() => {
-  //   qqq.setImage(__dirname + '/img/active.png')
-  // }, 5000)
+  ipcMain.on('message', (event, data) => {
+    tray.setImage(`${`${ __dirname }/img/`}${data.image}`);
+  });
 
-  store.set('test', qqq);
+  tray.on('click', () => {
+    win.isVisible() ? win.hide() : win.show();
+  });
+
 }
 
 app.on('ready', createWindow);
